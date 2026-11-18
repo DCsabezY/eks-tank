@@ -1,6 +1,11 @@
 /// <reference path="./types/index.d.ts" />
 
 class LoadingScene extends Phaser.Scene {
+
+    constructor() {
+        super('loading');
+    }
+
     init(){
         this.bg = this.add.rectangle(0, 0, this.sys.game.config.width,this.sys.game.config.height, 0xffffff);
         this.bg.setOrigin(0,0);
@@ -23,6 +28,15 @@ class LoadingScene extends Phaser.Scene {
         this.load.image('background', 'assets/background.png');
         this.load.image('bullet', 'assets/bullet.png');
         this.load.image('enemy', 'assets/enemy.png');
+        this.load.image('barrelBlack_side', 'assets/barrelBlack_side.png');
+        this.load.image('barrelBlack_top', 'assets/barrelBlack_top.png');
+        this.load.image('barrelRed_side', 'assets/barrelRed_side.png');
+        this.load.image('barrelRed_top', 'assets/barrelRed_top.png');
+        this.load.image('barrelRust_side', 'assets/barrelRust_side.png');
+        this.load.image('barrelRust_top', 'assets/barrelRust_top.png');
+        this.load.image('barricadeWood', 'assets/barricadeWood.png');
+        this.load.image('bulletRed2', 'assets/bulletRed2.png');
+        this.load.image('crateWood', 'assets/crateWood.png');
 
         this.load.spritesheet('explosion', 'assets/explosion.png', { frameWidth: 64, frameHeight: 64 });
     }
