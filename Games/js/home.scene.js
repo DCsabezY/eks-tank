@@ -1,5 +1,6 @@
 /// <reference path="./types/index.d.ts" />
 
+// Menu jelenet: cím, irányítás, Enter -> játék.
 class HomeScene extends Phaser.Scene {
 
     constructor() {
@@ -7,23 +8,32 @@ class HomeScene extends Phaser.Scene {
     }
 
     create() {
-        this.add.image(0, 0, 'background').setOrigin(0, 0);
+        const { width, height } = this.scale;
+        const textStyle = { fontFamily: 'Arial', fontSize: '20px', color: '#ffffff', align: 'center' };
 
-        // Ide jöhet majd a Start gomb vagy a játék logika!
+        // Füves háttér, a csempe ismétlődik
+        this.add.tileSprite(0, 0, width, height, 'tileGrass1').setOrigin(0, 0);
 
-        // Háttér szín vagy kép (ha nincs background.png, ez a téglalap látszani fog)
-        this.add.rectangle(0, 0, 800, 600, 0x333333).setOrigin(0, 0);
+        this.add.text(width / 2, 120, 'EKS tank', { fontFamily: 'Arial', fontSize: '64px', color: '#ffffff', stroke: '#000000', strokeThickness: 6 })
+            .setOrigin(0.5);
 
-        // Próbaként tegyünk ki egy ládát és egy hordót a képernyőre
-        this.add.image(400, 300, 'crateWood').setScale(2);
-        this.add.image(500, 300, 'barrelRed').setScale(2);
+        // P1 bal oldalt, P2 jobb oldalt
+        this.add.image(width * 0.25, 300, 'tank_blue');
+        this.add.text(width * 0.25, 380, 'P1\nW / S: előre / hátra\nA / D: forgás\nSpace: lövés', textStyle)
+            .setOrigin(0.5, 0).setStroke('#000000', 4);
 
-        // Felirat, hogy lássuk, elindult a jelenet
-        this.add.text(250, 150, 'Tank Játék - Főmenü', {
-            fontFamily: 'Arial',
-            fontSize: '28px',
-            color: '#ffffff'
+        this.add.image(width * 0.75, 300, 'tank_red');
+        this.add.text(width * 0.75, 380, 'P2\n↑ / ↓: előre / hátra\n← / →: forgás\nEnter: lövés', textStyle)
+            .setOrigin(0.5, 0).setStroke('#000000', 4);
+
+        const startText = this.add.text(width / 2, height - 60, 'Nyomj ENTER-t az indításhoz', { ...textStyle, fontSize: '28px' })
+            .setOrigin(0.5).setStroke('#000000', 4);
+
+        // Villogó felirat
+        this.tweens.add({ targets: startText, alpha: 0.2, duration: 600, yoyo: true, repeat: -1 });
+
+        this.input.keyboard.once('keydown-ENTER', () => {
+            this.scene.start('game');
         });
-
     }
 }

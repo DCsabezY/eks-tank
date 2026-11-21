@@ -1,44 +1,44 @@
 /// <reference path="./types/index.d.ts" />
 
+// Preload jelenet: betölti az ASSETS listában (assets.js) lévő fájlokat, közben töltősávot mutat.
 class LoadingScene extends Phaser.Scene {
 
     constructor() {
         super('loading');
     }
 
-    init(){
-        this.bg = this.add.rectangle(0, 0, this.sys.game.config.width,this.sys.game.config.height, 0xffffff);
-        this.bg.setOrigin(0,0);
+    preload() {
+        this.createProgressBar();
 
-        this.bgBar = this.add.rectangle(0, 0, 200,30, 0xd4d5d6);
-        Phaser.Display.Align.In.Center(this.bgBar, this.bg);
+        this.load.setPath('assets/');
 
-        this.progressBar = this.add.rectangle(0, 0, 0, 30, 0x13ba00);
-        Phaser.Display.Align.In.LeftCenter(this.progressBar, this.bgBar);
+        ASSETS.images.forEach((key) => this.load.image(key, key + '.png'));
+        ASSETS.spritesheets.forEach((s) => this.load.spritesheet(s.key, s.file, { frameWidth: s.frameWidth, frameHeight: s.frameHeight }));
+        ASSETS.audio.forEach((a) => this.load.audio(a.key, a.file));
+        ASSETS.tilemaps.forEach((m) => this.load.tilemapTiledJSON(m.key, m.file));
 
-        this.load.on(Phaser.Loader.Events.PROGRESS, (progress) => {
-            this.progressBar.setSize(progress * 200, 30);
-            Phaser.Display.Align.In.LeftCenter(this.progressBar, this.bgBar);
+        // Ha egy fájl hiányzik, itt látszik a konzolban, melyik
+        this.load.on(Phaser.Loader.Events.FILE_LOAD_ERROR, (file) => {
+            console.error('Nem sikerült betölteni:', file.key, file.url);
         });
-
     }
 
-    preload(){
-        this.load.image('tank', 'assets/tank.png');
-        this.load.image('background', 'assets/background.png');
-        this.load.image('bullet', 'assets/bullet.png');
-        this.load.image('enemy', 'assets/enemy.png');
-        this.load.image('barrelBlack_side', 'assets/barrelBlack_side.png');
-        this.load.image('barrelBlack_top', 'assets/barrelBlack_top.png');
-        this.load.image('barrelRed_side', 'assets/barrelRed_side.png');
-        this.load.image('barrelRed_top', 'assets/barrelRed_top.png');
-        this.load.image('barrelRust_side', 'assets/barrelRust_side.png');
-        this.load.image('barrelRust_top', 'assets/barrelRust_top.png');
-        this.load.image('barricadeWood', 'assets/barricadeWood.png');
-        this.load.image('bulletRed2', 'assets/bulletRed2.png');
-        this.load.image('crateWood', 'assets/crateWood.png');
+    createProgressBar() {
+        const { width, height } = this.scale;
+        const barWidth = 400;
+        const barHeight = 30;
+        const x = (width - barWidth) / 2;
+        const y = height / 2;
 
-        this.load.spritesheet('explosion', 'assets/explosion.png', { frameWidth: 64, frameHeight: 64 });
+        this.add.text(width / 2, y - 40, 'Betöltés...', { fontFamily: 'Arial', fontSize: '24px', color: '#ffffff' })
+            .setOrigin(0.5);
+
+        this.add.rectangle(x, y, barWidth, barHeight, 0x444444).setOrigin(0, 0);
+        const bar = this.add.rectangle(x, y, 0, barHeight, 0x13ba00).setOrigin(0, 0);
+
+        this.load.on(Phaser.Loader.Events.PROGRESS, (progress) => {
+            bar.width = barWidth * progress;
+        });
     }
 
     create() {
